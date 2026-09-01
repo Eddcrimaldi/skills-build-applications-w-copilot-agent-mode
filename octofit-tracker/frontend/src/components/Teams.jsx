@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getApiBaseUrl, normalizeCollection } from '../App';
+import { normalizeCollection } from '../App';
 
 function Teams() {
   const [teams, setTeams] = useState([]);
@@ -8,10 +8,14 @@ function Teams() {
 
   useEffect(() => {
     const controller = new AbortController();
+    const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+    const apiUrl = codespaceName
+      ? `https://${codespaceName}-8000.app.github.dev/api/teams/`
+      : 'http://localhost:8000/api/teams/';
 
     async function loadTeams() {
       try {
-        const response = await fetch(`${getApiBaseUrl()}/teams/`, { signal: controller.signal });
+        const response = await fetch(apiUrl, { signal: controller.signal });
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
         }

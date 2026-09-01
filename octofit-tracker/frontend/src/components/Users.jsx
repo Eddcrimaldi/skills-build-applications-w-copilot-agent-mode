@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getApiBaseUrl, normalizeCollection } from '../App';
+import { normalizeCollection } from '../App';
 
 function Users() {
   const [users, setUsers] = useState([]);
@@ -8,10 +8,14 @@ function Users() {
 
   useEffect(() => {
     const controller = new AbortController();
+    const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+    const apiUrl = codespaceName
+      ? `https://${codespaceName}-8000.app.github.dev/api/users/`
+      : 'http://localhost:8000/api/users/';
 
     async function loadUsers() {
       try {
-        const response = await fetch(`${getApiBaseUrl()}/users/`, { signal: controller.signal });
+        const response = await fetch(apiUrl, { signal: controller.signal });
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
         }
